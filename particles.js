@@ -49,7 +49,13 @@ export class Sand extends Particle {
     }
 
     update(row, col) {
-        // TODO update sand
+        let newRow = row + 1;
+
+        if (!moveParticle(row, col, newRow, col)) {
+            if (!moveParticle(row, col, newRow, col+1, this.swap)) {
+                moveParticle(row, col, newRow, col-1, this.swap);
+            }
+        }
     }
 }
 
