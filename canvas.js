@@ -196,6 +196,12 @@ export function moveParticle(row, col, newRow, newCol, swap) {
     }
 
     if (getParticle(newRow, newCol)) {
+        if (swap && swap(getParticle(newRow, newCol))) {
+            const temp = grid[newRow][newCol];
+            grid[newRow][newCol] = grid[row][col];
+            grid[row][col] = grid[newRow][newCol];
+            return true;
+        }
         return false;
     }
 
