@@ -111,7 +111,7 @@ export class Stone extends Particle {
 export class Dirt extends Sand {
     constructor() {
         super();
-        this.color = "brown";
+        this.color = "#964B00";
         this.type = "dirt";
     }
 }
@@ -147,7 +147,77 @@ export class Fire extends Particle {
             return;
         }
 
+        // Fire spreading for wood
+        if (getParticle(row - 1, col)?.type === "wood") {
+            setParticle(row - 1, col, new Fire());
+        } else if (getParticle(row, col + 1)?.type === "wood") {
+            setParticle(row, col + 1, new Fire());
+        } else if (getParticle(row, col - 1)?.type === "wood") {
+            setParticle(row, col - 1, new Fire());
+        }
+
+        // Fire making steam
+        if (getParticle(row - 1, col)?.type === "water") {
+            setParticle(row - 1, col, new Steam());
+        } else if (getParticle(row + 1, col)?.type === "water") {
+            setParticle(row - 1, col, new Steam());
+        } else if (getParticle(row, col + 1)?.type === "water") {
+            setParticle(row, col + 1, new Steam());
+        } else if (getParticle(row, col - 1)?.type === "water") {
+            setParticle(row, col - 1, new Steam());
+        }
+
         // Movement
+        if (!getParticle(row - 1, col) && checkBounds(row - 1, col)) {
+            moveParticle(row, col, row - 1, col);
+        } else if (getRandomInt(0, 1) && !getParticle(row, col + 1) && checkBounds(row, col + 1)) {
+            moveParticle(row, col, row, col + 1);
+        } else if (getRandomInt(0, 1) && !getParticle(row, col - 1) && checkBounds(row, col - 1)) {
+            moveParticle(row, col, row, col - 1);
+        }
+
+        
+    }
+}
+
+/**
+ * Wood particle
+ */
+export class Wood extends Particle {
+    constructor() {
+        super();
+        this.color = "#964B00";
+        this.type = "wood";
+    }
+}
+
+/**
+ * Steam particle
+ */
+export class Steam extends Particle {
+    constructor() {
+        super();
+        this.color = "#D3D3D3"
+        this.type = "steam";
+        this.duration = 0;
+        this.max_duration = getRandomInt(200,300);
+    }
+
+    update(row, col) {
+        this.duration++;
+        
+        // Disappears if 1/500 number is selected
+        if (getRandomInt(0, 500) == 15) {
+            setParticle(row, col, null);
+            return;
+        }
+
+        // Turns into water after some time
+        if (this.duration >= this.max_duration) {
+            setParticle(row, col, new Water());
+            return;
+        }
+
         if (!getParticle(row - 1, col) && checkBounds(row - 1, col)) {
             moveParticle(row, col, row - 1, col);
         } else if (getRandomInt(0, 1) && !getParticle(row, col + 1) && checkBounds(row, col + 1)) {
@@ -157,6 +227,8 @@ export class Fire extends Particle {
         }
     }
 }
+
+// Can make acid
 
 /**
  * Create particle based on dropdown name
@@ -175,6 +247,10 @@ export function checkParticleType(value) {
         return new Dirt();
     } else if (value == "Fire") {
         return new Fire();
+    } else if (value == "Wood") {
+        return new Wood();
+    } else if (value == "Steam") {
+        return new Steam();
     } else {
         return null;
     }
