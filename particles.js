@@ -128,6 +128,37 @@ export class Grass extends Sand {
 }
 
 /**
+ * Fire particle
+ */
+export class Fire extends Particle {
+    constructor() {
+        super();
+        this.color = "red";
+        this.type = "fire";
+        this.duration = 0;
+        this.max_duration = getRandomInt(50,100);
+    }
+
+    update(row, col) {
+        this.duration++;
+
+        if (this.duration >= this.max_duration) {
+            setParticle(row, col, null);
+            return;
+        }
+
+        // Movement
+        if (!getParticle(row - 1, col) && checkBounds(row - 1, col)) {
+            moveParticle(row, col, row - 1, col);
+        } else if (getRandomInt(0, 1) && !getParticle(row, col + 1) && checkBounds(row, col + 1)) {
+            moveParticle(row, col, row, col + 1);
+        } else if (getRandomInt(0, 1) && !getParticle(row, col - 1) && checkBounds(row, col - 1)) {
+            moveParticle(row, col, row, col - 1);
+        }
+    }
+}
+
+/**
  * Create particle based on dropdown name
  * 
  * @param {string} value 
@@ -142,6 +173,8 @@ export function checkParticleType(value) {
         return new Stone();
     } else if (value == "Dirt") {
         return new Dirt();
+    } else if (value == "Fire") {
+        return new Fire();
     } else {
         return null;
     }
