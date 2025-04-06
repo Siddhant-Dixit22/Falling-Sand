@@ -79,6 +79,13 @@ export class Water extends Particle {
             return;
         }
 
+        // Make water turn sand into dirt when touching it
+        if (getParticle(row+1, col)?.type == "sand") {
+            setParticle(row+1, col, new Dirt());
+            setParticle(row, col, null);
+            return;
+        }
+
         // Moving down
         if (getRandomInt(0,2) && !getParticle(row+1, col)) {
             moveParticle(row, col, row+1, col, super.swap);
@@ -243,10 +250,13 @@ export class Acid extends Particle {
         // Turns stone or wood into steam after interaction
         if (getParticle(row - 1, col)?.type === "wood" || getParticle(row - 1, col)?.type === "stone") {
             setParticle(row - 1, col, new Steam());
+            setParticle(row, col, null);
         } else if (getParticle(row, col + 1)?.type === "wood" || getParticle(row, col + 1)?.type === "stone") {
             setParticle(row, col + 1, new Steam());
+            setParticle(row, col, null);
         } else if (getParticle(row, col +1)?.type === "wood" || getParticle(row, col + 1)?.type === "stone") {
             setParticle(row, col - 1, new Steam());
+            setParticle(row, col, null);
         }
 
         // Turns water into acid
