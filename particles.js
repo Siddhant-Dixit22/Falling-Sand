@@ -228,7 +228,49 @@ export class Steam extends Particle {
     }
 }
 
-// Can make acid
+/**
+ * Acid Particle
+ */
+
+export class Acid extends Particle {
+    constructor() {
+        super();
+        this.color = "green";
+        this.type = "acid";
+    }
+
+    update(row, col) {
+        // Turns stone or wood into steam after interaction
+        if (getParticle(row - 1, col)?.type === "wood" || getParticle(row - 1, col)?.type === "stone") {
+            setParticle(row - 1, col, new Steam());
+        } else if (getParticle(row, col + 1)?.type === "wood" || getParticle(row, col + 1)?.type === "stone") {
+            setParticle(row, col + 1, new Steam());
+        } else if (getParticle(row, col +1)?.type === "wood" || getParticle(row, col + 1)?.type === "stone") {
+            setParticle(row, col - 1, new Steam());
+        }
+
+        // Turns water into acid
+        if (getParticle(row - 1, col)?.type === "water") {
+            setParticle(row - 1, col, new Acid());
+        } else if (getParticle(row, col + 1)?.type === "water") {
+            setParticle(row, col + 1, new Acid());
+        } else if (getParticle(row, col - 1)?.type === "water") {
+            setParticle(row, col - 1, new Acid());
+        }
+
+        // Moving down
+        if (getRandomInt(0,2) && !getParticle(row+1, col)) {
+            moveParticle(row, col, row+1, col, super.swap);
+        }
+
+        // Moving left/right
+        if (getRandomInt(0,1) && !getParticle(row, col+1)) {
+            moveParticle(row, col, row, col+1, super.swap);
+        } else if (getRandomInt(0,1) && !getParticle(row, col-1)) {
+            moveParticle(row, col, row, col-1, super.swap);
+        }
+    }
+}
 
 /**
  * Create particle based on dropdown name
@@ -251,6 +293,8 @@ export function checkParticleType(value) {
         return new Wood();
     } else if (value == "Steam") {
         return new Steam();
+    }  else if (value == "Acid") {
+        return new Acid();
     } else {
         return null;
     }
