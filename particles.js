@@ -156,11 +156,11 @@ export class Fire extends Particle {
 
         // Fire spreading for wood
         if (getParticle(row - 1, col)?.type === "wood") {
-            setParticle(row - 1, col, new Fire());
+            getRandomInt(1,5) === 1 ? setParticle(row - 1, col, new Steam()) : setParticle(row - 1, col, new Fire());
         } else if (getParticle(row, col + 1)?.type === "wood") {
-            setParticle(row, col + 1, new Fire());
+            getRandomInt(1,5) === 1 ? setParticle(row - 1, col, new Steam()) : setParticle(row - 1, col, new Fire());
         } else if (getParticle(row, col - 1)?.type === "wood") {
-            setParticle(row, col - 1, new Fire());
+            getRandomInt(1,5) === 1 ? setParticle(row - 1, col, new Steam()) : setParticle(row - 1, col, new Fire()); 
         }
 
         // Fire making steam
@@ -248,7 +248,7 @@ export class Acid extends Particle {
 
     update(row, col) {
         // Turns stone or wood into steam after interaction
-        if (getParticle(row - 1, col)?.type === "wood" || getParticle(row - 1, col)?.type === "stone") {
+        if (getParticle(row + 1, col)?.type === "wood" || getParticle(row - 1, col)?.type === "stone") {
             setParticle(row - 1, col, new Steam());
             setParticle(row, col, null);
         } else if (getParticle(row, col + 1)?.type === "wood" || getParticle(row, col + 1)?.type === "stone") {
@@ -260,8 +260,8 @@ export class Acid extends Particle {
         }
 
         // Turns water into acid
-        if (getParticle(row - 1, col)?.type === "water") {
-            setParticle(row - 1, col, new Acid());
+        if (getParticle(row + 1, col)?.type === "water") {
+            setParticle(row + 1, col, new Acid());
         } else if (getParticle(row, col + 1)?.type === "water") {
             setParticle(row, col + 1, new Acid());
         } else if (getParticle(row, col - 1)?.type === "water") {
